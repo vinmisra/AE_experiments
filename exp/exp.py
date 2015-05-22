@@ -22,6 +22,8 @@ path_YAML_finetune = 'finetune.yaml'
 
 #parameters
 dir_models = os.path.join(MODELS_DIR,"A1")
+if not os.path.exists(dir_models):
+    os.makedirs(dir_models)
 
 params = { 
     'dir_models': dir_models,
