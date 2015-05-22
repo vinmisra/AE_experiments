@@ -20,38 +20,10 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
 path_YAML_finetune = 'finetune.yaml'
 
-#parameters
-dir_models = os.path.join(MODELS_DIR,"A2f")
-if not os.path.exists(dir_models):
-    os.makedirs(dir_models)
 
-params = { 
-    'dir_models': dir_models,
-    'dir_fuel'  : FUEL_DIR,
-    'paths_YAML_pretrains' : paths_YAML_pretrains,
-    'path_YAML_finetune' : path_YAML_finetune,
-    'train_stop': 50000,
-    'valid_stop': 60000,
-    'n_units' : [784, 64, 10],
-    'corruptions' : [0,0],
-    'enc_activations' : ['"tanh"','"tanh"'],
-    'dec_activations' : ['"tanh"','"tanh"'],
-    'pretrain_batch_size' : 100,
-    'pretrain_epochs' : 10,
-    'monitoring_batches' : 5,
-    'finetune_batch_size' : 100,
-    'finetune_epochs' : 100
-}
-path_params = os.path.join(dir_models,"params.pkl")
-pickle.dump(params,open(path_params,'w'))
-
-#training and dumping of model files
-trainer = train_AE.train_AE(**params)
-trainer.pretrain()
-trainer.finetune()
-
+#### EXP A2f
 # #parameters
-# dir_models = os.path.join(MODELS_DIR,"A1")
+# dir_models = os.path.join(MODELS_DIR,"A2f")
 # if not os.path.exists(dir_models):
 #     os.makedirs(dir_models)
 
@@ -62,10 +34,10 @@ trainer.finetune()
 #     'path_YAML_finetune' : path_YAML_finetune,
 #     'train_stop': 50000,
 #     'valid_stop': 60000,
-#     'n_units' : [784, 10],
-#     'corruptions' : [0],
-#     'enc_activations' : ['"tanh"'],
-#     'dec_activations' : ['"tanh"'],
+#     'n_units' : [784, 64, 10],
+#     'corruptions' : [0,0],
+#     'enc_activations' : ['"tanh"','"tanh"'],
+#     'dec_activations' : ['"tanh"','"tanh"'],
 #     'pretrain_batch_size' : 100,
 #     'pretrain_epochs' : 10,
 #     'monitoring_batches' : 5,
@@ -74,3 +46,36 @@ trainer.finetune()
 # }
 # path_params = os.path.join(dir_models,"params.pkl")
 # pickle.dump(params,open(path_params,'w'))
+
+# #training and dumping of model files
+# trainer = train_AE.train_AE(**params)
+# trainer.pretrain()
+# trainer.finetune()
+
+
+
+####EXP A1
+#parameters
+dir_models = os.path.join(MODELS_DIR,"A1")
+if not os.path.exists(dir_models):
+    os.makedirs(dir_models)
+
+params = { 
+    'dir_models': dir_models,
+    'dir_fuel'  : FUEL_DIR,
+    'paths_YAML_pretrains' : paths_YAML_pretrains,
+    'path_YAML_finetune' : path_YAML_finetune,
+    'train_stop': 50000,
+    'valid_stop': 60000,
+    'n_units' : [784, 10],
+    'corruptions' : [0],
+    'enc_activations' : ['"tanh"'],
+    'dec_activations' : ['"tanh"'],
+    'pretrain_batch_size' : 100,
+    'pretrain_epochs' : 10,
+    'monitoring_batches' : 5,
+    'finetune_batch_size' : 100,
+    'finetune_epochs' : 100
+}
+path_params = os.path.join(dir_models,"params.pkl")
+pickle.dump(params,open(path_params,'w'))
