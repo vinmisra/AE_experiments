@@ -1,3 +1,5 @@
+import matplotlib;
+matplotlib.use('Agg') #for running on AWS without ssh -X
 #Script manages training various types of stacked denoising autoencoders
 
 from pylearn2.config import yaml_parse
@@ -7,6 +9,16 @@ from pylearn2.costs.cost import Cost, DefaultDataSpecsMixin
 
 import os
 import pdb
+
+DATA_DIR = '/Users/vmisra/data/compression/AE_experiments' #local
+#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+
+dir_models = os.path.join(data_dir,"models")
+dir_fuel = os.path.join(data_dir,"fuel")
+
+paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
+path_YAML_finetune = 'finetune.yaml'
+
 
 Pretrained_DAE_Layer_Encode = PretrainedLayer
 class Pretrained_DAE_Layer_Decode(PretrainedLayer):
@@ -146,7 +158,10 @@ class train_AE():
             "layers_spec" : layers_spec,
             "valid_stop" : self.valid_stop,
             "max_epochs" : self.pretrain_epochs,
-            "save_path" : os.path.join(self.dir_models,"finetune.pkl")
+            "save_path" : os.path.join(self.dir_models,"finetune.pkl"),
+            "mnist_train_X_path": os.path.join(dir_fuel,"mnist_train_X.pkl"),
+            "mnist_valid_X_path": os.path.join(dir_fuel,"mnist_valid_X.pkl"),
+            "mnist_test_X_path": os.path.join(dir_fuel,"mnist_test_X.pkl")
         }
 
         self.YAML_finetune = YAML_raw % YAML_dict
@@ -162,11 +177,10 @@ class train_AE():
         train.main_loop()
 
 #if __name__=="__main__":
-data_dir = '~/vmisra/data/compression/AE_experiments'
-dir_models = os.path.join(data_dir,"delete_me")
-paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
-path_YAML_finetune = 'finetune.yaml'
+
 
 trainer = train_AE(dir_models = dir_models, 
                    paths_YAML_pretrains=paths_YAML_pretrains, 
                    path_YAML_finetune=path_YAML_finetune)
+#trainer.pretrain()
+trainer.finetune()

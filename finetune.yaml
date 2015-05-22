@@ -1,6 +1,6 @@
 !obj:pylearn2.train.Train {
     dataset: &train !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
-        X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_train_X.pkl'
+        X: !pkl: %(mnist_train_X_path)s
     },
     model: !obj:train_AE.MLP_autoencoder {
         batch_size: %(batch_size)i,
@@ -19,10 +19,10 @@
             {
                 'train' : *train,
                 'valid' : !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
-                              X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_valid_X.pkl'
+                              X: !pkl: %(mnist_valid_X_path)s
                           },
                 'test' : !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
-                              X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_test_X.pkl'
+                              X: !pkl: %(mnist_test_X_path)s
                           }
             },
         cost: !obj:train_AE.MeanSquaredReconstructionCost {},
