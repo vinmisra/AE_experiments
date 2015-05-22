@@ -1,3 +1,8 @@
+import sys
+PROJ_DIR = '/home/ubuntu/AE_experiments'
+if PROJ_DIR not in sys.path:
+    sys.path.append('/home/ubuntu/AE_experiments')
+
 import matplotlib
 matplotlib.use('Agg') #for running on AWS without ssh -X
 import os, pdb
@@ -6,8 +11,8 @@ import train_AE
 
 
 #home directory for all experiments:
-DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
-#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+#DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
+DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
 
 #subdirectories and paths for all experiments:
 MODELS_DIR = os.path.join(DATA_DIR,"models")
@@ -16,7 +21,7 @@ paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
 path_YAML_finetune = 'finetune.yaml'
 
 #parameters
-dir_models = os.path.join(MODELS_DIR,"test")
+dir_models = os.path.join(MODELS_DIR,"A1")
 
 params = { 
     'dir_models': dir_models,
@@ -25,10 +30,10 @@ params = {
     'path_YAML_finetune' : path_YAML_finetune,
     'train_stop': 50000,
     'valid_stop': 60000,
-    'n_units' : [784, 1000, 10],
-    'corruptions' : [0, 0],
-    'enc_activations' : ['"tanh"','"tanh"'],
-    'dec_activations' : ['"tanh"','"tanh"'],
+    'n_units' : [784, 10],
+    'corruptions' : [0],
+    'enc_activations' : ['"tanh"'],
+    'dec_activations' : ['"tanh"'],
     'pretrain_batch_size' : 100,
     'pretrain_epochs' : 10,
     'monitoring_batches' : 5,
