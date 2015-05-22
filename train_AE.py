@@ -1,5 +1,3 @@
-import matplotlib;
-matplotlib.use('Agg') #for running on AWS without ssh -X
 #Script manages training various types of stacked denoising autoencoders
 
 from pylearn2.config import yaml_parse
@@ -9,16 +7,6 @@ from pylearn2.costs.cost import Cost, DefaultDataSpecsMixin
 
 import os
 import pdb
-
-DATA_DIR = '/Users/vmisra/data/compression/AE_experiments' #local
-#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
-
-dir_models = os.path.join(DATA_DIR,"models")
-dir_fuel = os.path.join(DATA_DIR,"fuel")
-
-paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
-path_YAML_finetune = 'finetune.yaml'
-
 
 Pretrained_DAE_Layer_Encode = PretrainedLayer
 class Pretrained_DAE_Layer_Decode(PretrainedLayer):
@@ -38,7 +26,7 @@ class MeanSquaredReconstructionCost(DefaultDataSpecsMixin, Cost):
 
         X = data
         X_hat = model.reconstruct(X)
-        loss = ((X-X_hat)**2).sum(axis=1)
+        loss = ((X-X_hat)**2).mean(axis=1)
         return loss.mean()
 
 
@@ -65,7 +53,8 @@ class MLP_autoencoder(MLP):
 
 class train_AE():
     def __init__(self,
-                 dir_models,    
+                 dir_models,  
+                 dir_fuel,  
                  paths_YAML_pretrains,
                  path_YAML_finetune,
                  train_stop = 50000,
@@ -159,9 +148,9 @@ class train_AE():
             "valid_stop" : self.valid_stop,
             "max_epochs" : self.pretrain_epochs,
             "save_path" : os.path.join(self.dir_models,"finetune.pkl"),
-            "mnist_train_X_path": os.path.join(dir_fuel,"mnist_train_X.pkl"),
-            "mnist_valid_X_path": os.path.join(dir_fuel,"mnist_valid_X.pkl"),
-            "mnist_test_X_path": os.path.join(dir_fuel,"mnist_test_X.pkl")
+            "mnist_train_X_path": os.path.join(self.dir_fuel,"mnist_train_X.pkl"),
+            "mnist_valid_X_path": os.path.join(self.dir_fuel,"mnist_valid_X.pkl"),
+            "mnist_test_X_path": os.path.join(self.dir_fuel,"mnist_test_X.pkl")
         }
 
         self.YAML_finetune = YAML_raw % YAML_dict
@@ -175,12 +164,3 @@ class train_AE():
         print(self.YAML_finetune)
         train = yaml_parse.load(self.YAML_finetune)
         train.main_loop()
-
-#if __name__=="__main__":
-
-
-trainer = train_AE(dir_models = dir_models, 
-                   paths_YAML_pretrains=paths_YAML_pretrains, 
-                   path_YAML_finetune=path_YAML_finetune)
-#trainer.pretrain()
-trainer.finetune()
