@@ -47,14 +47,7 @@ path_YAML_finetune = 'finetune.yaml'
 # path_params = os.path.join(dir_models,"params.pkl")
 # pickle.dump(params,open(path_params,'w'))
 
-# #training and dumping of model files
-# trainer = train_AE.train_AE(**params)
-# trainer.pretrain()
-# trainer.finetune()
-
-
-
-####EXP A1
+###EXP A
 #parameters
 dir_models = os.path.join(MODELS_DIR,"A1")
 if not os.path.exists(dir_models):
@@ -79,3 +72,11 @@ params = {
 }
 path_params = os.path.join(dir_models,"params.pkl")
 pickle.dump(params,open(path_params,'w'))
+
+#training and dumping of model files
+trainer = train_AE.train_AE(**params)
+trainer.pretrain()
+trainer.finetune()
+
+
+
