@@ -146,7 +146,7 @@ class train_AE():
             "batch_size" : self.finetune_batch_size,
             "layers_spec" : layers_spec,
             "valid_stop" : self.valid_stop,
-            "max_epochs" : self.pretrain_epochs,
+            "max_epochs" : self.finetune_epochs,
             "save_path" : os.path.join(self.dir_models,"finetune.pkl"),
             "mnist_train_X_path": os.path.join(self.dir_fuel,"mnist_train_X.pkl"),
             "mnist_valid_X_path": os.path.join(self.dir_fuel,"mnist_valid_X.pkl"),
