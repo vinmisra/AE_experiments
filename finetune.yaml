@@ -1,0 +1,46 @@
+!obj:pylearn2.train.Train {
+    dataset: &train !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
+        X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_train_X.pkl'
+    },
+    model: !obj:train_AE.MLP_autoencoder {
+        batch_size: %(batch_size)i,
+        layers: [
+                    %(layers_spec)s
+                ],
+        nvis: 784,
+        monitor_targets: False,
+    },
+    algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
+        learning_rate: .05,
+        learning_rule: !obj:pylearn2.training_algorithms.learning_rule.Momentum {
+            init_momentum: .5,
+        },
+        monitoring_dataset:
+            {
+                'train' : *train,
+                'valid' : !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
+                              X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_valid_X.pkl'
+                          },
+                'test' : !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
+                              X: !pkl: '/Users/vmisra/data/AE_experiments/mnist_test_X.pkl'
+                          }
+            },
+        cost: !obj:train_AE.MeanSquaredReconstructionCost {},
+        termination_criterion: !obj:pylearn2.termination_criteria.EpochCounter {
+                    max_epochs: %(max_epochs)i
+                },
+        update_callbacks: !obj:pylearn2.training_algorithms.sgd.ExponentialDecay {
+            decay_factor: 1.00004,
+            min_lr: .000001
+        }
+    },
+    extensions: [
+        !obj:pylearn2.training_algorithms.learning_rule.MomentumAdjustor {
+            start: 1,
+            saturate: 250,
+            final_momentum: .7
+        }
+    ],
+    save_path: %(save_path)s,
+    save_freq: 2
+}
