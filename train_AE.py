@@ -13,8 +13,8 @@ import pdb
 DATA_DIR = '/Users/vmisra/data/compression/AE_experiments' #local
 #DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
 
-dir_models = os.path.join(data_dir,"models")
-dir_fuel = os.path.join(data_dir,"fuel")
+dir_models = os.path.join(DATA_DIR,"models")
+dir_fuel = os.path.join(DATA_DIR,"fuel")
 
 paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
 path_YAML_finetune = 'finetune.yaml'
