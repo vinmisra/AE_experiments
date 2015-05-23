@@ -21,20 +21,26 @@ paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
 path_YAML_finetune = 'finetune.yaml'
 
 
-### EXP A2e
+### EXP A2a-A2d
 #parameters
-dir_models = os.path.join(MODELS_DIR,"A2e")
-if not os.path.exists(dir_models):
-    os.makedirs(dir_models)
+names = ['A2a','A2b','A2c','A2d']
+n_unitss = [[784,1500,10],
+           [784,1000,10],
+           [784,500,10],
+           [784,250,10]]
+for (name,n_units) in zip(names,n_unitss):
+    dir_models = os.path.join(MODELS_DIR,name)
+    if not os.path.exists(dir_models):
+        os.makedirs(dir_models)
 
-params = { 
+    params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
     'paths_YAML_pretrains' : paths_YAML_pretrains,
     'path_YAML_finetune' : path_YAML_finetune,
     'train_stop': 50000,
     'valid_stop': 60000,
-    'n_units' : [784, 125, 10],
+    'n_units' : n_units,
     'corruptions' : [0,0],
     'enc_activations' : ['"tanh"','"tanh"'],
     'dec_activations' : ['"tanh"','"tanh"'],
@@ -43,14 +49,41 @@ params = {
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 100
-}
-path_params = os.path.join(dir_models,"params.pkl")
-pickle.dump(params,open(path_params,'w'))
+    }
+    path_params = os.path.join(dir_models,"params.pkl")
+    pickle.dump(params,open(path_params,'w'))
 
-#training and dumping of model files
-trainer = train_AE.train_AE(**params)
-trainer.pretrain()
-trainer.finetune()
+    #training and dumping of model files
+    trainer = train_AE.train_AE(**params)
+    trainer.pretrain()
+    trainer.finetune()
+
+
+# ### EXP A2e
+# #parameters
+# dir_models = os.path.join(MODELS_DIR,"A2e")
+# if not os.path.exists(dir_models):
+#     os.makedirs(dir_models)
+
+# params = { 
+#     'dir_models': dir_models,
+#     'dir_fuel'  : FUEL_DIR,
+#     'paths_YAML_pretrains' : paths_YAML_pretrains,
+#     'path_YAML_finetune' : path_YAML_finetune,
+#     'train_stop': 50000,
+#     'valid_stop': 60000,
+#     'n_units' : [784, 125, 10],
+#     'corruptions' : [0,0],
+#     'enc_activations' : ['"tanh"','"tanh"'],
+#     'dec_activations' : ['"tanh"','"tanh"'],
+#     'pretrain_batch_size' : 100,
+#     'pretrain_epochs' : 10,
+#     'monitoring_batches' : 5,
+#     'finetune_batch_size' : 100,
+#     'finetune_epochs' : 100
+# }
+# path_params = os.path.join(dir_models,"params.pkl")
+# pickle.dump(params,open(path_params,'w'))
 
 # ### EXP A2f
 # #parameters
