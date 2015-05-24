@@ -51,8 +51,8 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
-    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
+    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
+    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
     'pretrain_lr' : 0.001,
     'finetune_lr' : 0.1
     }
