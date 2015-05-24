@@ -47,11 +47,11 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'enc_activations' : enc_activations,
     'dec_activations' : dec_activations,
     'pretrain_batch_size' : 100,
-    'pretrain_epochs' : 15,
+    'pretrain_epochs' : 5,
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
+    'pretrain_cost_YAML' : '!obj:train_AE.MeanSquaredReconstructionCost',
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost'
     }
     path_params = os.path.join(dir_models,"params.pkl")
