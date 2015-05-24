@@ -17,18 +17,17 @@ DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
 #subdirectories and paths for all experiments:
 MODELS_DIR = os.path.join(DATA_DIR,"models")
 FUEL_DIR = os.path.join(DATA_DIR,"fuel")
-paths_YAML_pretrains = ['layer0_skeleton.yaml', 'layer1_skeleton.yaml']
-path_YAML_finetune = 'finetune.yaml'
 
 
-### EXP A2a-A2d
-#parameters
-names = ['A2a','A2b','A2c','A2d']
-n_unitss = [[784,1500,10],
-           [784,1000,10],
-           [784,500,10],
-           [784,250,10]]
-for (name,n_units) in zip(names,n_unitss):
+##### EXP Z1
+names = ['Z1']
+n_unitss = [[784,1000,1000,1000,15]]
+corruptionss = [[.1,.2,.3,.3]]
+enc_activationss = [['"sigmoid"']*4]
+dec_activationss = [['"sigmoid"']*4]
+
+for (name,n_units, enc_activations, dec_activations) in zip(names,n_unitss,enc_activationss, dec_activationss):
+    
     dir_models = os.path.join(MODELS_DIR,name)
     if not os.path.exists(dir_models):
         os.makedirs(dir_models)
@@ -36,19 +35,21 @@ for (name,n_units) in zip(names,n_unitss):
     params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
-    'paths_YAML_pretrains' : paths_YAML_pretrains,
-    'path_YAML_finetune' : path_YAML_finetune,
+    'paths_YAML_pretrains' : ['layer0_skeleton.yaml', 'layer1_skeleton.yaml'],
+    'path_YAML_finetune' : 'finetune_simpletrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
     'n_units' : n_units,
-    'corruptions' : [0,0],
-    'enc_activations' : ['"tanh"','"tanh"'],
-    'dec_activations' : ['"tanh"','"tanh"'],
+    'corruptions' : [],
+    'enc_activations' : enc_activations,
+    'dec_activations' : dec_activations,
     'pretrain_batch_size' : 100,
-    'pretrain_epochs' : 10,
+    'pretrain_epochs' : 15,
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
-    'finetune_epochs' : 100
+    'finetune_epochs' : 300,
+    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
+    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost'
     }
     path_params = os.path.join(dir_models,"params.pkl")
     pickle.dump(params,open(path_params,'w'))
@@ -58,6 +59,13 @@ for (name,n_units) in zip(names,n_unitss):
     trainer.pretrain()
     trainer.finetune()
 
+# ### EXP A2a-A2d
+# #parameters
+# names = ['A2a','A2b','A2c','A2d']
+# n_unitss = [[784,1500,10],
+#            [784,1000,10],
+#            [784,500,10],
+#            [784,250,10]]
 
 # ### EXP A2e
 # #parameters

@@ -22,7 +22,7 @@
         batch_size : %(batch_size)i,
         monitoring_batches : %(monitoring_batches)i,
         monitoring_dataset : *train,
-        cost : !obj:pylearn2.costs.autoencoder.MeanSquaredReconstructionError {},
+        cost : %(cost)s {},
         termination_criterion : !obj:pylearn2.termination_criteria.EpochCounter {
             max_epochs: %(max_epochs)i,
         },

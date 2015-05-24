@@ -5,6 +5,9 @@ from pylearn2.models.mlp import PretrainedLayer, MLP
 from pylearn2.space import VectorSpace
 from pylearn2.costs.cost import Cost, DefaultDataSpecsMixin
 
+import theano
+import theano.Tensor as T
+
 import os
 import pdb
 
@@ -29,6 +32,17 @@ class MeanSquaredReconstructionCost(DefaultDataSpecsMixin, Cost):
         loss = ((X-X_hat)**2).mean(axis=1)
         return loss.mean()
 
+class XtropyReconstructionCost(DefaultDataSpecsMixin, Cost):
+    supervised = False
+
+    def expr(self, model, data, **kwargs):
+        space, source = self.get_data_specs(model)
+        space.validate(data)
+
+        X = data
+        X_hat = model.reconstruct(X)
+        loss = -T.mean(X*T.log(X_hat) + (1-X)*T.log(1-X_hat))
+        return loss
 
 class MLP_autoencoder(MLP):
     def reconstruct(self, inputs):
@@ -67,7 +81,9 @@ class train_AE():
                  pretrain_epochs = 10,
                  monitoring_batches = 5,
                  finetune_batch_size = 100,
-                 finetune_epochs = 100
+                 finetune_epochs = 100,
+                 pretrain_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
+                 finetune_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError'
                  ):
         n_layers = len(n_units)-1
         dim_layers = zip(n_units[:-1],n_units[1:])
@@ -99,7 +115,8 @@ class train_AE():
                 "batch_size" : self.pretrain_batch_size,
                 "monitoring_batches" : self.monitoring_batches,
                 "max_epochs" : self.pretrain_epochs,
-                "save_path" : self.paths_pretrained[idx]
+                "save_path" : self.paths_pretrained[idx],
+                "cost" : 
             }
 
             #add the load_path parameters as well
