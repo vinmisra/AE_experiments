@@ -27,7 +27,6 @@
                     max_epochs: %(max_epochs)i
                 },
     },
-    ],
     save_path: %(save_path)s,
     save_freq: 2
 }
