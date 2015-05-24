@@ -15,7 +15,7 @@
         act_dec: %(act_dec)s,    # Linear activation on the decoder side.
     },
     algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
-        learning_rate : 1e-3,
+        learning_rate : %(lr)f,
         batch_size : %(batch_size)i,
         monitoring_batches : %(monitoring_batches)i,
         monitoring_dataset : *train,

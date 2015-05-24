@@ -11,7 +11,7 @@
         monitor_targets: False,
     },
     algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
-        learning_rate: .1,
+        learning_rate: %(lr)f,
         monitoring_dataset:
             {
                 'train' : *train,

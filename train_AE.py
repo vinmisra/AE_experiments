@@ -6,7 +6,7 @@ from pylearn2.space import VectorSpace
 from pylearn2.costs.cost import Cost, DefaultDataSpecsMixin
 
 import theano
-import theano.Tensor as T
+import theano.tensor as T
 
 import os
 import pdb
@@ -83,7 +83,9 @@ class train_AE():
                  finetune_batch_size = 100,
                  finetune_epochs = 100,
                  pretrain_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
-                 finetune_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError'
+                 finetune_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
+                 pretrain_lr=0.1,
+                 finetune_lr=0.1
                  ):
         n_layers = len(n_units)-1
         dim_layers = zip(n_units[:-1],n_units[1:])
@@ -116,7 +118,8 @@ class train_AE():
                 "monitoring_batches" : self.monitoring_batches,
                 "max_epochs" : self.pretrain_epochs,
                 "save_path" : self.paths_pretrained[idx],
-                "cost" : self.pretrain_cost_YAML
+                "cost" : self.pretrain_cost_YAML,
+                "lr" : self.pretrain_lr
             }
 
             #add the load_path parameters as well
@@ -168,7 +171,8 @@ class train_AE():
             "mnist_train_X_path": os.path.join(self.dir_fuel,"mnist_train_X.pkl"),
             "mnist_valid_X_path": os.path.join(self.dir_fuel,"mnist_valid_X.pkl"),
             "mnist_test_X_path": os.path.join(self.dir_fuel,"mnist_test_X.pkl"),
-            "cost": self.finetune_cost_YAML
+            "cost": self.finetune_cost_YAML,
+            "lr": self.finetune_lr
         }
 
         self.YAML_finetune = YAML_raw % YAML_dict

@@ -11,8 +11,8 @@ import train_AE
 
 
 #home directory for all experiments:
-#DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
-DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
+#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
 
 #subdirectories and paths for all experiments:
 MODELS_DIR = os.path.join(DATA_DIR,"models")
@@ -26,7 +26,7 @@ corruptionss = [[.1,.2,.3,.3]]
 enc_activationss = [['"sigmoid"']*4]
 dec_activationss = [['"sigmoid"']*4]
 
-for (name,n_units, enc_activations, dec_activations) in zip(names,n_unitss,enc_activationss, dec_activationss):
+for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
     dir_models = os.path.join(MODELS_DIR,name)
     if not os.path.exists(dir_models):
@@ -35,12 +35,15 @@ for (name,n_units, enc_activations, dec_activations) in zip(names,n_unitss,enc_a
     params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
-    'paths_YAML_pretrains' : ['layer0_skeleton.yaml', 'layer1_skeleton.yaml'],
+    'paths_YAML_pretrains' : ['layer0_skeleton.yaml', 
+                              'layer1_skeleton.yaml',
+                              'layer1_skeleton.yaml',
+                              'layer1_skeleton.yaml'],
     'path_YAML_finetune' : 'finetune_simpletrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
     'n_units' : n_units,
-    'corruptions' : [],
+    'corruptions' : corruptions,
     'enc_activations' : enc_activations,
     'dec_activations' : dec_activations,
     'pretrain_batch_size' : 100,
