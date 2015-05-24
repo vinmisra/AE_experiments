@@ -11,8 +11,8 @@ import train_AE
 
 
 #home directory for all experiments:
-DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
-#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+#DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
+DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
 
 #subdirectories and paths for all experiments:
 MODELS_DIR = os.path.join(DATA_DIR,"models")
