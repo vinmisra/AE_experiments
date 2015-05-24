@@ -20,11 +20,11 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['Z2c']
-n_unitss = [[784,500,500]]
-corruptionss = [[.2, .3]]
-enc_activationss = [['"sigmoid"']*2]
-dec_activationss = [['"sigmoid"']*2]
+names = ['Z1b']
+n_unitss = [[784,1000,1000,1000,15]]
+corruptionss = [[.1, .2, .3, .3]]
+enc_activationss = [['"sigmoid"']*4]
+dec_activationss = [['"sigmoid"']*4]
 
 for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
@@ -36,7 +36,9 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
     'paths_YAML_pretrains' : ['layer0_skeleton.yaml',
-                              'layer1_skeleton.yaml'],
+                              'layer1_skeleton.yaml',
+                              'layer2_skeleton.yaml',
+                              'layer3_skeleton.yaml'],
     'path_YAML_finetune' : 'finetune_simpletrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
