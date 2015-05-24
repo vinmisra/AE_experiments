@@ -179,6 +179,7 @@ class train_AE():
 
     def pretrain(self):
         for yaml in self.YAML_pretrain:
+            print(yaml)
             train = yaml_parse.load(yaml)
             train.main_loop()
 
