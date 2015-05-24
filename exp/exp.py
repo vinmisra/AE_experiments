@@ -59,7 +59,7 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
 
     #training and dumping of model files
     trainer = train_AE.train_AE(**params)
-    trainer.pretrain()
+    #trainer.pretrain()
     trainer.finetune()
 
 # ### EXP A2a-A2d
