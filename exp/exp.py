@@ -51,8 +51,8 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'finetune_epochs' : 300,
     'pretrain_cost_YAML' : '!obj:train_AE.MeanSquaredReconstructionCost',
     'finetune_cost_YAML' : '!obj:train_AE.MeanSquaredReconstructionCost',
-    'pretrain_lr' : 0.0002,
-    'finetune_lr' : 0.0002
+    'pretrain_lr' : 0.1,
+    'finetune_lr' : 0.1
     }
     path_params = os.path.join(dir_models,"params.pkl")
     pickle.dump(params,open(path_params,'w'))
