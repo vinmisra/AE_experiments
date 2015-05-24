@@ -35,7 +35,8 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
-    'paths_YAML_pretrains' : ['layer0_skeleton.yaml'],
+    'paths_YAML_pretrains' : ['layer0_skeleton.yaml',
+                              'layer1_skeleton.yaml'],
     'path_YAML_finetune' : 'finetune_simpletrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
