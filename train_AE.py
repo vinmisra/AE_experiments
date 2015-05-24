@@ -116,7 +116,7 @@ class train_AE():
                 "monitoring_batches" : self.monitoring_batches,
                 "max_epochs" : self.pretrain_epochs,
                 "save_path" : self.paths_pretrained[idx],
-                "cost" : 
+                "cost" : self.pretrain_cost_YAML
             }
 
             #add the load_path parameters as well
@@ -167,7 +167,8 @@ class train_AE():
             "save_path" : os.path.join(self.dir_models,"finetune.pkl"),
             "mnist_train_X_path": os.path.join(self.dir_fuel,"mnist_train_X.pkl"),
             "mnist_valid_X_path": os.path.join(self.dir_fuel,"mnist_valid_X.pkl"),
-            "mnist_test_X_path": os.path.join(self.dir_fuel,"mnist_test_X.pkl")
+            "mnist_test_X_path": os.path.join(self.dir_fuel,"mnist_test_X.pkl"),
+            "cost": self.finetune_cost_YAML
         }
 
         self.YAML_finetune = YAML_raw % YAML_dict
