@@ -41,7 +41,7 @@ class XtropyReconstructionCost(DefaultDataSpecsMixin, Cost):
 
         X = data
         X_hat = model.reconstruct(X)
-        loss = -T.mean(X*T.log(X_hat) + (1-X)*T.log(1-X_hat))
+        loss = -T.mean(X*T.log(X_hat+0.00001) + (1-X)*T.log(1-X_hat+0.00001))
         return loss
 
 class MLP_autoencoder(MLP):
