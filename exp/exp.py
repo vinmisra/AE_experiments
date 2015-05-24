@@ -20,7 +20,7 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['Z2']
+names = ['Z2b']
 n_unitss = [[784,500,500]]
 corruptionss = [[.2, .3]]
 enc_activationss = [['"tanh"']*2]
@@ -49,8 +49,8 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : '!obj:train_AE.MeanSquaredReconstructionCost',
-    'finetune_cost_YAML' : '!obj:train_AE.MeanSquaredReconstructionCost',
+    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
+    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
     'pretrain_lr' : 0.1,
     'finetune_lr' : 0.1
     }
