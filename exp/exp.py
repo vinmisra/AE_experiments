@@ -20,7 +20,7 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['Z2b']
+names = ['Z2c']
 n_unitss = [[784,500,500]]
 corruptionss = [[.2, .3]]
 enc_activationss = [['"sigmoid"']*2]
@@ -44,14 +44,14 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'corruptions' : corruptions,
     'enc_activations' : enc_activations,
     'dec_activations' : dec_activations,
-    'pretrain_batch_size' : 100,
+    'pretrain_batch_size' : 10,
     'pretrain_epochs' : 15,
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
     'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
-    'pretrain_lr' : 0.1,
+    'pretrain_lr' : 0.001,
     'finetune_lr' : 0.1
     }
     path_params = os.path.join(dir_models,"params.pkl")
