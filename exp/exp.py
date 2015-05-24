@@ -23,8 +23,8 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 names = ['Z2b']
 n_unitss = [[784,500,500]]
 corruptionss = [[.2, .3]]
-enc_activationss = [['"tanh"']*2]
-dec_activationss = [['"tanh"']*2]
+enc_activationss = [['"sigmoid"']*2]
+dec_activationss = [['"sigmoid"']*2]
 
 for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
