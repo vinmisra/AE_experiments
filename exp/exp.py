@@ -1,7 +1,7 @@
 import sys
 PROJ_DIR = '/home/ubuntu/AE_experiments'
 if PROJ_DIR not in sys.path:
-    sys.path.append('/home/ubuntu/AE_experiments')
+    sys.path.append(PROJ_DIR)
 
 import matplotlib
 matplotlib.use('Agg') #for running on AWS without ssh -X
@@ -51,8 +51,8 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
+    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
+    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost',
     'pretrain_lr' : 0.001,
     'finetune_lr' : 0.1
     }
