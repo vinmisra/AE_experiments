@@ -20,7 +20,7 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['Z1b']
+names = ['Z1d']
 n_unitss = [[784,1000,1000,1000,15]]
 corruptionss = [[.1, .2, .3, .3]]
 enc_activationss = [['"sigmoid"']*4]
@@ -47,7 +47,7 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'enc_activations' : enc_activations,
     'dec_activations' : dec_activations,
     'pretrain_batch_size' : 10,
-    'pretrain_epochs' : 15,
+    'pretrain_epochs' : 700,
     'monitoring_batches' : 5,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
