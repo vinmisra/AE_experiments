@@ -20,7 +20,7 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['Z1f']
+names = ['Z1g']
 n_unitss = [[784,1000,1000,1000,15]]
 corruptionss = [[.1,.2,.3,.3]
 enc_activationss = [['"sigmoid"']*4]
@@ -46,12 +46,12 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'corruptions' : corruptions,
     'enc_activations' : enc_activations,
     'dec_activations' : dec_activations,
-    'pretrain_lr' : 0.01,
-    'pretrain_batch_size' : 100,
-    'pretrain_epochs' : 30,
+    'pretrain_lr' : 0.001,
+    'pretrain_batch_size' : 10,
+    'pretrain_epochs' : 15,
     'monitoring_batches' : 5,
-    'finetune_lr' : 0.1,
-    'finetune_batch_size' : 100,
+    'finetune_lr' : 0.001,
+    'finetune_batch_size' : 10,
     'finetune_epochs' : 300,
     'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum'
