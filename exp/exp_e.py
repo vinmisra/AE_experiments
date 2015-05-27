@@ -20,9 +20,9 @@ FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
 
 ##### EXP Z2
-names = ['B4']
+names = ['B5']
 n_unitss = [[784,1000,1000,1000,15]]
-corruptionss = [[.5,.5,.5,.5]]
+corruptionss = [[.3,.3,.2,.1]]
 enc_activationss = [['"sigmoid"']*4]
 dec_activationss = [['"sigmoid"']*4]
 
