@@ -1,27 +1,37 @@
-import sys
+#home code directory:
 PROJ_DIR = '/home/ubuntu/AE_experiments'
-if PROJ_DIR not in sys.path:
-    sys.path.append(PROJ_DIR)
-
-import matplotlib
-matplotlib.use('Agg') #for running on AWS without ssh -X
-import os, pdb
-import cPickle as pickle
-import train_AE
-
-
 #home directory for all experiments:
 #DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
 DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+#set stdout to print and to log to a file.
+import sys, os, pdb
+if PROJ_DIR not in sys.path:
+    sys.path.append(PROJ_DIR)
+
+class Logger(object):
+    def __init__(self, filepath=os.path.join(DATA_DIR,'stdout.log')):
+        self.terminal = sys.stdout
+        self.log_file = open(filepath,'w')
+    def write(self, message):
+        self.terminal.write(message)
+        self.log_file.write(message)
+sys.stdout = Logger()
+
+
+
+#######Now the actual experiment code
+import matplotlib
+matplotlib.use('Agg') #for running on AWS without ssh -X
+import cPickle as pickle
+import train_AE
 
 #subdirectories and paths for all experiments:
 MODELS_DIR = os.path.join(DATA_DIR,"models")
 FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
-
 ##### EXP Z2
-names = ['B6']
-n_unitss = [[784,1000,500,200,15]]
+names = ['B11']
+n_unitss = [[784,1000,500,200,5]]
 corruptionss = [[.3, .3, .2, .1]]
 enc_activationss = [['"sigmoid"']*4]
 dec_activationss = [['"sigmoid"']*4]
