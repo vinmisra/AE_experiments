@@ -32,9 +32,9 @@ import cPickle as pickle
 import train_AE
 
 
-names = ['B20']
-n_unitss = [[784,1000,1000,1000,5]]
-corruptionss = [[.5, .5, .5, .5]]
+names = ['B15']
+n_unitss = [[784,500,500,15,5]]
+corruptionss = [[.2,.2,.2,.2]]
 enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
 dec_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
 
