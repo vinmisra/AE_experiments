@@ -1,23 +1,29 @@
-#home code directory:
-PROJ_DIR = '/home/ubuntu/AE_experiments'
-#home directory for all experiments:
-#DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
-DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
-#set stdout to print and to log to a file.
 import sys, os, pdb
+
+#home code directory:
+PROJ_DIR = '/Users/vmisra/Dropbox/Research/compression/AE_experiments' #local
+#PROJ_DIR = '/home/ubuntu/AE_experiments' #AWS
+#home directory for all experiments:
+DATA_DIR = '/Users/vmisra/data/AE_experiments' #local
+#DATA_DIR = '/home/ubuntu/data/AE_experiments' #AWS
+#subdirectories and paths for all experiments:
+MODELS_DIR = os.path.join(DATA_DIR,"models")
+FUEL_DIR = os.path.join(DATA_DIR,"fuel")
+
+#set stdout to print and to log to a file.
+
 if PROJ_DIR not in sys.path:
     sys.path.append(PROJ_DIR)
 
 class Logger(object):
-    def __init__(self, filepath=os.path.join(DATA_DIR,'stdout.log')):
+    def __init__(self, filepath):
         self.terminal = sys.stdout
         self.log_file = open(filepath,'w')
     def write(self, message):
         self.terminal.write(message)
         self.log_file.write(message)
-sys.stdout = Logger()
-
-
+    def flush(self):
+        pass
 
 #######Now the actual experiment code
 import matplotlib
@@ -25,16 +31,12 @@ matplotlib.use('Agg') #for running on AWS without ssh -X
 import cPickle as pickle
 import train_AE
 
-#subdirectories and paths for all experiments:
-MODELS_DIR = os.path.join(DATA_DIR,"models")
-FUEL_DIR = os.path.join(DATA_DIR,"fuel")
 
-##### EXP Z2
-names = ['B15']
-n_unitss = [[784,1000,5]]
-corruptionss = [[.2,.2]]
-enc_activationss = [['"sigmoid"']*2]
-dec_activationss = [['"sigmoid"']*2]
+names = ['B20']
+n_unitss = [[784,1000,1000,1000,5]]
+corruptionss = [[.5, .5, .5, .5]]
+enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
+dec_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
 
 for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
@@ -42,12 +44,12 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     if not os.path.exists(dir_models):
         os.makedirs(dir_models)
 
+    sys.stdout = Logger(os.path.join(dir_models,'stdout.log'))
+
     params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
-    'paths_YAML_pretrains' : ['layer0_skeleton.yaml',
-                              'layer1_skeleton.yaml',
-                              'layer2_skeleton.yaml'],
+    'paths_YAML_pretrains' : ['layer'+str(x)+'_skeleton.yaml' for x in range(len(corruptions))],
     'path_YAML_finetune' : 'finetune_simpletrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
