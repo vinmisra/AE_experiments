@@ -1,6 +1,7 @@
 import sys, os, pdb
 
 #home code directory:
+
 #PROJ_DIR = '/Users/vmisra/Dropbox/Research/compression/AE_experiments' #local
 PROJ_DIR = '/home/ubuntu/AE_experiments' #AWS
 #home directory for all experiments:

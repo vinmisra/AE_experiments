@@ -66,7 +66,7 @@ class XtropyReconstructionCost_batchsum_tanh(DefaultDataSpecsMixin, Cost):
         X = data
         X_hat = model.reconstruct(X)
         X_hat_norm = (X_hat + 1)*.5
-        loss = -T.sum(X*T.log(1-X_hat_norm) + (1-X)*T.log(1-X_hat_norm), axis=1)
+        loss = -T.sum((1-X)*T.log(1-X_hat_norm+0.0001) + X*T.log(X_hat_norm+0.0001), axis=1)# 
         return T.mean(loss)
 
 class MLP_autoencoder(MLP):
