@@ -65,8 +65,8 @@ class XtropyReconstructionCost_batchsum_tanh(DefaultDataSpecsMixin, Cost):
 
         X = data
         X_hat = model.reconstruct(X)
-        X_hat_norm = (X_hat + 1)/2
-        loss = -T.sum(X*T.log(X_hat_norm) + (1-X)*T.log(1-X_hat_norm),axis=1)
+        X_hat_norm = (X_hat + 1)*.5
+        loss = -T.sum(X*T.log(1-X_hat_norm) + (1-X)*T.log(1-X_hat_norm), axis=1)
         return T.mean(loss)
 
 class MLP_autoencoder(MLP):
@@ -89,7 +89,7 @@ class MLP_autoencoder(MLP):
             NO CORRUPTION at present
         """
         return self.fprop(inputs)
-        
+
 class train_AE():
     def __init__(self,
                  dir_models,  
