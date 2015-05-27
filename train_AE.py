@@ -56,6 +56,19 @@ class XtropyReconstructionCost_batchsum(DefaultDataSpecsMixin, Cost):
         loss = -T.sum(X*T.log(X_hat) + (1-X)*T.log(1-X_hat),axis=1)
         return T.mean(loss)
 
+class XtropyReconstructionCost_batchsum_tanh(DefaultDataSpecsMixin, Cost):
+    supervised = False
+
+    def expr(self, model, data, **kwargs):
+        space, source = self.get_data_specs(model)
+        space.validate(data)
+
+        X = data
+        X_hat = model.reconstruct(X)
+        X_hat_norm = (X_hat + 1)/2
+        loss = -T.sum(X*T.log(X_hat_norm) + (1-X)*T.log(1-X_hat_norm),axis=1)
+        return T.mean(loss)
+
 class MLP_autoencoder(MLP):
     def reconstruct(self, inputs):
         """
@@ -76,7 +89,7 @@ class MLP_autoencoder(MLP):
             NO CORRUPTION at present
         """
         return self.fprop(inputs)
-
+        
 class train_AE():
     def __init__(self,
                  dir_models,  
@@ -94,10 +107,11 @@ class train_AE():
                  monitoring_batches = 5,
                  finetune_batch_size = 100,
                  finetune_epochs = 100,
-                 pretrain_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
+                 pretrain_cost_YAML=['!obj:train_AE.MeanSquaredReconstructionError'],
                  finetune_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
                  pretrain_lr=0.1,
-                 finetune_lr=0.1
+                 finetune_lr=0.1,
+                 irange=[.05,.05]
                  ):
         n_layers = len(n_units)-1
         dim_layers = zip(n_units[:-1],n_units[1:])
@@ -130,13 +144,14 @@ class train_AE():
                 "monitoring_batches" : self.monitoring_batches,
                 "max_epochs" : self.pretrain_epochs,
                 "save_path" : self.paths_pretrained[idx],
-                "cost" : self.pretrain_cost_YAML,
+                "cost" : self.pretrain_cost_YAML[idx],
                 "lr" : self.pretrain_lr
             }
 
             #add the load_path parameters as well
             for layer_idx in range(self.n_layers):
                 YAML_dict["load_path_"+str(layer_idx)] = self.paths_pretrained[layer_idx]
+                YAML_dict["irange_"+str(layer_idx)] = self.irange[layer_idx]
 
             #different YAML skeletons for layer 0 and the later layers.
             YAML_raw = open(self.paths_YAML_pretrains[idx],'r').read()

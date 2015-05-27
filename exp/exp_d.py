@@ -32,11 +32,11 @@ import cPickle as pickle
 import train_AE
 
 
-names = ['B14']
-n_unitss = [[784,390,190,90,5]]
-corruptionss = [[.2,.2,.2,.2]]
-enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
-dec_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
+names = ['C4']
+n_unitss = [[784,1000,100,5]]
+corruptionss = [[.2,.2,.1]]
+enc_activationss = [['"tanh"']*len(corruptions) for corruptions in corruptionss]
+dec_activationss = [['"tanh"']*len(corruptions) for corruptions in corruptionss]
 
 for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
@@ -64,8 +64,9 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'finetune_lr' : 0.1,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum'
+    'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum_tanh']*len(corruptions),
+    'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum_tanh',
+    'irange' : [.057,.074,.24]
     }
     path_params = os.path.join(dir_models,"params.pkl")
     pickle.dump(params,open(path_params,'w'))
