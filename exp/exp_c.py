@@ -33,8 +33,8 @@ import cPickle as pickle
 import train_AE
 
 
-names = ['D8']
-n_unitss = [[784,1000,250, 64]]
+names = ['D13']
+n_unitss = [[784,1000,250, 64,5]]
 corruptionss = [[.2]]
 enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
 dec_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
@@ -47,7 +47,7 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
 
     sys.stdout = Logger(os.path.join(dir_models,'stdout.log'))
 
-    input_probs = [.5,.5,.9,.9,.9,.9]
+    input_probs = [.5,.5,.9,.9,.9,.9, .9]
     input_scales = [1/x for x in input_probs]
     params = { 
     'dir_models': dir_models,
@@ -74,10 +74,10 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum']*len(corruptions),
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
     'solotrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'irange' : [.05]*6, #[.23, .28, .56, .56,.28, .23],
+    'irange' : [.057, .07, .14, .29, .29 .14, .07, .23],
     'input_probs' : input_probs,
     'input_scales' : input_scales,
-    'no_pretrain_activations' : ['sigmoid']*8
+    'no_pretrain_activations' : ['tanh']*7+['sigmoid']
     }
     path_params = os.path.join(dir_models,"params.pkl")
     pickle.dump(params,open(path_params,'w'))
