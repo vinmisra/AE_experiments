@@ -20,7 +20,10 @@
         learning_rate: %(lr)f,
         monitoring_dataset:
             {
-                'train' : *train
+                'train' : *train,
+                'valid' : !obj:pylearn2.datasets.dense_design_matrix.DenseDesignMatrix {
+                              X: !pkl: %(mnist_valid_X_path)s
+                          }
             },
         cost: %(cost)s {},
         termination_criterion: !obj:pylearn2.termination_criteria.EpochCounter {
