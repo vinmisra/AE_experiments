@@ -47,7 +47,7 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
 
     sys.stdout = Logger(os.path.join(dir_models,'stdout.log'))
 
-    input_probs = [.5,.5,.9,.9,.9,.9, .9]
+    input_probs = [.5,.5,.9,.9,.9,.9,.9,.9]
     input_scales = [1/x for x in input_probs]
     params = { 
     'dir_models': dir_models,
