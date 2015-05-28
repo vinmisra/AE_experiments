@@ -1,6 +1,7 @@
 import sys, os, pdb
 
 #home code directory:
+
 #PROJ_DIR = '/Users/vmisra/Dropbox/Research/compression/AE_experiments' #local
 PROJ_DIR = '/home/ubuntu/AE_experiments' #AWS
 #home directory for all experiments:
@@ -32,11 +33,11 @@ import cPickle as pickle
 import train_AE
 
 
-names = ['C5']
-n_unitss = [[784,1000,250,64,5]]
-corruptionss = [[.2,.2,.2,.1]]
-enc_activationss = [['"sigmoid"']+['"tanh"']*(len(corruptions)-1) for corruptions in corruptionss]
-dec_activationss = enc_activationss #[['"tanh"']*len(corruptions) for corruptions in corruptionss]
+names = ['D10']
+n_unitss = [[784,1000,250, 64]]
+corruptionss = [[.2]]
+enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
+dec_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
 
 for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n_unitss,corruptionss,enc_activationss, dec_activationss):
     
@@ -46,11 +47,14 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
 
     sys.stdout = Logger(os.path.join(dir_models,'stdout.log'))
 
+    input_probs = [.5,.5,.9,.9,.9,.9]
+    input_scales = [1/x for x in input_probs]
     params = { 
     'dir_models': dir_models,
     'dir_fuel'  : FUEL_DIR,
     'paths_YAML_pretrains' : ['layer'+str(x)+'_skeleton.yaml' for x in range(len(corruptions))],
     'path_YAML_finetune' : 'finetune_simpletrain.yaml',
+    'path_YAML_solotrain' : 'solotrain.yaml',
     'train_stop': 50000,
     'valid_stop': 60000,
     'n_units' : n_units,
@@ -61,20 +65,28 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'pretrain_batch_size' : 100,
     'pretrain_epochs' : 15,
     'monitoring_batches' : 5,
-    'finetune_lr' : 0.1,
+    'finetune_lr' : 0.01,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum']+['!obj:train_AE.XtropyReconstructionCost_batchsum_tanh']*(len(corruptions)-1),
+    'solotrain_lr' : 0.01,
+    'solotrain_batch_size' : 100,
+    'solotrain_epochs' : 300,
+    'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum']*len(corruptions),
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'irange' : [.05,.05,.05,.05]
+    'solotrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
+    'irange' : [.23, .28, .56, .56,.28, .23],
+    'input_probs' : input_probs,
+    'input_scales' : input_scales,
+    'no_pretrain_activations' : ['sigmoid']*8
     }
     path_params = os.path.join(dir_models,"params.pkl")
     pickle.dump(params,open(path_params,'w'))
 
     #training and dumping of model files
     trainer = train_AE.train_AE(**params)
-    trainer.pretrain()
-    trainer.finetune()
+    trainer.solotrain()
+    #trainer.pretrain()
+    #trainer.finetune()
 
 # ### EXP A2a-A2d
 # #parameters

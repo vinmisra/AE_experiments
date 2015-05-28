@@ -33,7 +33,7 @@ import cPickle as pickle
 import train_AE
 
 
-names = ['D9']
+names = ['D10']
 n_unitss = [[784,1000,250, 64]]
 corruptionss = [[.2]]
 enc_activationss = [['"sigmoid"']*len(corruptions) for corruptions in corruptionss]
@@ -68,13 +68,13 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'finetune_lr' : 0.01,
     'finetune_batch_size' : 100,
     'finetune_epochs' : 300,
-    'solotrain_lr' : 0.001,
+    'solotrain_lr' : 0.01,
     'solotrain_batch_size' : 100,
     'solotrain_epochs' : 300,
     'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum']*len(corruptions),
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
     'solotrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'irange' : [.05]*6, #[.23, .28, .56, .56,.28, .23],
+    'irange' : [.23, .28, .56, .56,.28, .23],
     'input_probs' : input_probs,
     'input_scales' : input_scales,
     'no_pretrain_activations' : ['sigmoid']*8
