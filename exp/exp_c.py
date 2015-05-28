@@ -74,7 +74,7 @@ for (name,n_units, corruptions, enc_activations, dec_activations) in zip(names,n
     'pretrain_cost_YAML' : ['!obj:train_AE.XtropyReconstructionCost_batchsum']*len(corruptions),
     'finetune_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
     'solotrain_cost_YAML' : '!obj:train_AE.XtropyReconstructionCost_batchsum',
-    'irange' : [.23, .28, .56, .56,.28, .23],
+    'irange' : [.05]*6, #[.23, .28, .56, .56,.28, .23],
     'input_probs' : input_probs,
     'input_scales' : input_scales,
     'no_pretrain_activations' : ['sigmoid']*8
