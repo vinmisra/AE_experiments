@@ -64,10 +64,41 @@ class XtropyReconstructionCost_batchsum_tanh(DefaultDataSpecsMixin, Cost):
         space.validate(data)
 
         X = data
-        X_hat = model.reconstruct(X)
+        X_hat = model.reconstruct(X*.5)
         X_hat_norm = (X_hat + 1)*.5
-        loss = -T.sum((1-X)*T.log(1-X_hat_norm+0.0001) + X*T.log(X_hat_norm+0.0001), axis=1)# 
-        return T.mean(loss)
+        lossa = -T.sum((1-X)*T.log(1-X_hat_norm), axis=1)
+        lossb =  -T.sum( X*T.log(X_hat_norm), axis=1)
+        return T.mean(lossa+lossb)
+
+class MLP_autoencoder_Dropout(MLP):
+    def __init__(self, input_include_probs=None, input_scales=None, **kwargs):
+        super(MLP_autoencoder_Dropout, self).__init__(**kwargs)
+        self.input_include_probs = input_include_probs
+        self.input_scales = input_scales
+
+    def reconstruct(self, inputs):
+        """
+        Reconstruct the inputs after corrupting and mapping through the
+        encoder and decoder.
+        Parameters
+        ----------
+        inputs : tensor_like or list of tensor_likes
+            Theano symbolic (or list thereof) representing the input
+            minibatch(es) to be corrupted and reconstructed. Assumed to be
+            2-tensors, with the first dimension indexing training examples
+            and the second indexing data dimensions.
+        Returns
+        -------
+        reconstructed : tensor_like or list of tensor_like
+            Theano symbolic (or list thereof) representing the corresponding
+            reconstructed minibatch(es) after encoding/decoding.
+            NO CORRUPTION at present
+        """
+        return self.dropout_fprop(state_below=inputs, 
+            input_include_probs = self.input_include_probs,
+            input_scales = self.input_scales,
+            default_input_include_prob = 1,
+            default_input_scale=1)
 
 class MLP_autoencoder(MLP):
     def reconstruct(self, inputs):
@@ -88,14 +119,15 @@ class MLP_autoencoder(MLP):
             reconstructed minibatch(es) after encoding/decoding.
             NO CORRUPTION at present
         """
-        return self.fprop(inputs)
+        return self.fprop(state_below=inputs)
 
-class train_AE():
+class train_AE(object):
     def __init__(self,
                  dir_models,  
                  dir_fuel,  
                  paths_YAML_pretrains,
                  path_YAML_finetune,
+                 path_YAML_solotrain,
                  train_stop = 50000,
                  valid_stop = 60000,
                  n_units = [784, 1000, 10],
@@ -104,14 +136,21 @@ class train_AE():
                  dec_activations = ['"tanh"','"tanh"'],
                  pretrain_batch_size = 100,
                  pretrain_epochs = 10,
+                 pretrain_lr=0.1,
                  monitoring_batches = 5,
                  finetune_batch_size = 100,
                  finetune_epochs = 100,
+                 finetune_lr=0.1,
+                 solotrain_batch_size = 100,
+                 solotrain_epochs = 100,
+                 solotrain_lr=0.1,
                  pretrain_cost_YAML=['!obj:train_AE.MeanSquaredReconstructionError'],
                  finetune_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
-                 pretrain_lr=0.1,
-                 finetune_lr=0.1,
-                 irange=[.05,.05]
+                 solotrain_cost_YAML='!obj:train_AE.MeanSquaredReconstructionError',
+                 irange=[.05,.05],
+                 input_probs = [0,0],
+                 input_scales =[1,1],
+                 no_pretrain_activations = None
                  ):
         n_layers = len(n_units)-1
         dim_layers = zip(n_units[:-1],n_units[1:])
@@ -124,8 +163,83 @@ class train_AE():
         del self.layer_idx
         del self.self
 
-        self.genPretrainYAML_list()
-        self.genFinetuneYAML()
+        
+        
+
+#generates YAML for finetuning the overall AE, WITH NO PRETRAINING.
+    def genSolotrain_YAML(self):
+        #build up layers_spec string
+        base_layers_YAML = {
+        "relu" : \
+        """!obj:pylearn2.models.mlp.RectifiedLinear {
+        layer_name: '%(name)s',
+        dim: %(dim)i,
+        irange: %(irange)f
+        } """,
+        "tanh" : \
+        """!obj:pylearn2.models.mlp.Tanh {
+        layer_name: '%(name)s',
+        dim: %(dim)i,
+        irange: %(irange)f
+        } """,
+        "sigmoid" : \
+        """!obj:pylearn2.models.mlp.Sigmoid {
+        layer_name: '%(name)s',
+        dim: %(dim)i,
+        irange: %(irange)f
+        } """
+        }
+
+        layers_spec = ""
+        dims = self.n_units[1:] + self.n_units[-2::-1]
+
+        for idx in range(len(dims)):
+            layer_dict = { 
+                "name": str(idx),
+                "dim": dims[idx],
+                "irange": self.irange[idx]
+                }
+            base_layer_YAML = base_layers_YAML[self.no_pretrain_activations[idx]]
+            if idx == 0:
+                layers_spec = base_layer_YAML % layer_dict
+            else:
+                layers_spec = layers_spec + ", \n" + base_layer_YAML % layer_dict
+        
+
+        ##Build up input_probs string
+        input_probs_string = ''
+        for idx in range(len(dims)):
+            input_probs_string += "'"+str(idx)+"'"
+            input_probs_string += ":"+str(self.input_probs[idx])
+            if idx < len(dims)-1:
+                input_probs_string += ','
+
+        ##Build up input_scales string
+        input_scales_string = ''
+        for idx in range(len(dims)):
+            input_scales_string += "'"+str(idx)+"'"
+            input_scales_string += ":"+str(self.input_scales[idx])
+            if idx < len(dims)-1:
+                input_scales_string += ','
+
+        YAML_raw = open(self.path_YAML_solotrain,'r').read()
+        YAML_dict = { 
+            "train_stop" : self.train_stop,
+            "batch_size" : self.solotrain_batch_size,
+            "layers_spec" : layers_spec,
+            "valid_stop" : self.valid_stop,
+            "max_epochs" : self.solotrain_epochs,
+            "save_path" : os.path.join(self.dir_models,"solotrain.pkl"),
+            "mnist_train_X_path": os.path.join(self.dir_fuel,"mnist_train_X.pkl"),
+            "mnist_valid_X_path": os.path.join(self.dir_fuel,"mnist_valid_X.pkl"),
+            "mnist_test_X_path": os.path.join(self.dir_fuel,"mnist_test_X.pkl"),
+            "cost": self.solotrain_cost_YAML,
+            "lr": self.solotrain_lr,
+            "input_probs" : input_probs_string,
+            "input_scales" : input_scales_string
+        }
+
+        self.YAML_solotrain = YAML_raw % YAML_dict
 
 #generates a list of YAML for the denoising AE pretraining.
     def genPretrainYAML_list(self):
@@ -205,12 +319,20 @@ class train_AE():
         self.YAML_finetune = YAML_raw % YAML_dict
 
     def pretrain(self):
+        self.genPretrainYAML_list()
         for yaml in self.YAML_pretrain:
             print(yaml)
             train = yaml_parse.load(yaml)
             train.main_loop()
 
     def finetune(self):
+        self.genFinetuneYAML()
         print(self.YAML_finetune)
         train = yaml_parse.load(self.YAML_finetune)
+        train.main_loop()
+
+    def solotrain(self):
+        self.genSolotrain_YAML()
+        print(self.YAML_solotrain)
+        train = yaml_parse.load(self.YAML_solotrain)
         train.main_loop()
